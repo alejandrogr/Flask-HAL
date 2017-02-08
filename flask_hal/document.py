@@ -85,10 +85,17 @@ class BaseDocument(object):
 
         # Add Embedded: Embedded API TBC
         if self.embedded:
+            embedded = {}
+            for n, v in self.embedded.items():
+                if isinstance(v, list):
+                    embedded[n] = []
+                    for item in v:
+                        embedded[n].append(item.to_dict() if not isinstance(item, dict) else item)
+                else:
+                    embedded[n] = v.to_dict()
+
             document.update({
-                '_embedded': dict(
-                    (n, v.to_dict()) for n, v in self.embedded.items()
-                )
+                '_embedded': embedded
             })
 
         return document
